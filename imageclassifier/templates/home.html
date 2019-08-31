@@ -1,0 +1,54 @@
+<html>
+  <head>
+    <!-- Load the latest version of TensorFlow.js -->
+    <script src="https://unpkg.com/@tensorflow/tfjs"></script>
+    <script src="https://unpkg.com/@tensorflow-models/mobilenet@2.0.2"></script>
+  </head>
+  <body>
+    <div id="console"></div>
+    <!-- Add an image that we will use to test -->
+<!-- to upload the file -->
+<input type="file" onchange="previewFile()"><br>
+<img id="img" src="" width=227 height=227/><br>
+<button id = "predict">Predict</button>
+    <!-- Load index.js after the content of the page -->
+<p id="mypara">Upload an image and then click  'predict'</p>
+    <script>
+<!-- to display the image -->
+function previewFile() {
+  var preview = document.querySelector('img');
+  var file    = document.querySelector('input[type=file]').files[0];
+  var reader  = new FileReader();
+
+  reader.addEventListener("load", function () {
+    preview.src = reader.result;
+  }, false);
+
+  if (file) {
+    reader.readAsDataURL(file);
+  }
+	document.getElementById("mypara").innerHTML = "Click 'predict'  ";
+}
+document.getElementById("predict").onclick = function() {
+let net;
+
+async function app() {
+
+  net = await mobilenet.load();
+  console.log('Sucessfully loaded model');
+
+  // Make a prediction through the model on our image.
+  const imgEl = document.getElementById('img');
+const validImageTypes = ['image/gif', 'image/jpeg', 'image/png', 'image/jpg'];	
+if (!validImageTypes.includes(imgEl))   {
+	document.getElementById("mypara").innerHTML = "Not a valid image";
+}
+  const result = await net.classify(imgEl);
+  console.log(result);
+	document.getElementById("mypara").innerHTML = "AI's top predication says that this is an image of " + result[0].className + " with the probability of " + result[0].probability;
+}
+app();
+} 
+</script>
+ </body>
+</html>
